@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entering Mountain Operations</title>
+  <style>
+    :root {
+      --bg: #edf3f6;
+      --surface: #ffffff;
+      --surface-2: #f7fafc;
+      --text: #10212b;
+      --muted: #49606f;
+      --line: #d7e2e8;
+      --brand: #0f4c6b;
+      --brand-2: #113a52;
+      --accent: #d8ecf7;
+      --shadow: 0 18px 40px rgba(16, 33, 43, 0.08);
+      --radius: 22px;
+      --radius-lg: 30px;
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #f8fcff, #eef4f7 40%),
+        linear-gradient(180deg, #eef4f7 0%, #edf3f6 100%);
+    }
+    img, video { max-width: 100%; display: block; }
+    button { font: inherit; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(238, 244, 247, 0.94);
+      border-bottom: 1px solid rgba(215, 226, 232, 0.9);
+    }
+    .nav-wrap {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+    }
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: var(--brand-2);
+      white-space: nowrap;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    nav button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    nav button:hover,
+    nav button.active {
+      background: var(--surface);
+      color: var(--brand-2);
+      box-shadow: 0 6px 18px rgba(16, 33, 43, 0.06);
+    }
+    .page {
+      display: none;
+      width: min(var(--max), calc(100% - 28px));
+      margin: 26px auto 40px;
+    }
+    .page.active { display: block; }
+    .hero {
+      position: relative;
+      min-height: 560px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(180deg, rgba(10, 31, 44, 0.16), rgba(10, 31, 44, 0.78)),
+        url('assets/images/banner.jpg') center/cover;
+      display: flex;
+      align-items: flex-end;
+    }
+    .hero-content {
+      padding: 46px;
+      max-width: 780px;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.96;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.6rem, 5vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+    .hero p {
+      margin: 18px 0 0;
+      font-size: 1.12rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.92);
+      max-width: 760px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.24);
+      cursor: pointer;
+    }
+    .button.primary {
+      background: white;
+      color: var(--brand-2);
+      border: none;
+    }
+    .button.ghost {
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+    .grid-3 {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .layout {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+    .card.soft { background: var(--surface-2); }
+    .card h2, .card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .card p, .card li {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+    .section-number {
+      display: inline-flex;
+      min-width: 36px;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: var(--brand-2);
+      border-radius: 999px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .quote {
+      padding: 18px 18px 18px 20px;
+      border-left: 4px solid var(--brand);
+      background: #f7fbfd;
+      border-radius: 14px;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    .quote strong { color: var(--brand-2); }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+    .checklist li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .checkmark {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--brand-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-top: 3px;
+    }
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    .steps li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 14px;
+      padding: 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .steps li::before {
+      content: counter(step);
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: var(--brand);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    .photo {
+      overflow: hidden;
+      padding: 0;
+    }
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-caption {
+      padding: 18px 20px 20px;
+      color: var(--muted);
+      line-height: 1.7;
+      background: var(--surface);
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .video-frame {
+      aspect-ratio: 16 / 9;
+      background: #dfeaf0;
+    }
+    .video-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #dfeaf0;
+    }
+    .video-copy {
+      padding: 18px 18px 20px;
+    }
+    .video-copy p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+    .footer-note {
+      margin-top: 22px;
+      padding: 24px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #12364d, #0d2332);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+    .footer-note p {
+      color: rgba(255,255,255,0.82);
+      margin: 0;
+      line-height: 1.75;
+    }
+    @media (max-width: 1100px) {
+      .video-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 980px) {
+      .grid-3, .layout { grid-template-columns: 1fr; }
+      .hero { min-height: 430px; }
+    }
+    @media (max-width: 640px) {
+      .nav-wrap { flex-direction: column; align-items: stretch; }
+      nav { justify-content: center; }
+      .hero-content { padding: 28px; }
+      .page { margin-top: 18px; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="nav-wrap">
+      <div class="brand">Entering Mountain Operations</div>
+      <nav>
+        <button class="active" data-page="home" type="button">Home</button>
+        <button data-page="entry" type="button">How to Enter</button>
+        <button data-page="communication" type="button">Communication</button>
+        <button data-page="videos" type="button">Videos</button>
+        <button data-page="analysis" type="button">Analysis</button>
+      </nav>
+    </div>
+  </div>
+
+  <main>
+    <section class="page active" id="home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="eyebrow">DC Remix Project</div>
+          <h1>Entering Mountain Operations</h1>
+          <p>
+            A polished guide for ASU students built from interviews, course research, and my own experience as a ski instructor. My main finding is that skiing skill matters, but communication is what helps people enter, adapt, and become trusted in this community.
+          </p>
+          <div class="hero-actions">
+            <a href="#home-details" class="button primary">Explore the findings</a>
+            <button class="button ghost" data-page="entry" type="button">See how to get started</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" id="home-details">
+        <article class="card">
+          <h2>Who this is for</h2>
+          <p>ASU students interested in seasonal work, outdoor careers, leadership, or learning how a communication-heavy professional community actually works.</p>
+        </article>
+        <article class="card">
+          <h2>Core research finding</h2>
+          <p>Communication is not usually taught in a formal lesson. New members learn it by observing experienced people, getting corrected, and adjusting over time.</p>
+        </article>
+        <article class="card">
+          <h2>Why it matters</h2>
+          <p>Understanding communication practices early helps newcomers integrate faster, perform better, and build credibility within ski school and ski patrol environments.</p>
+        </article>
+      </div>
+
+      <div class="layout">
+        <div class="stack">
+          <article class="card">
+            <div class="section-number">01</div>
+            <h2>What this community actually is</h2>
+            <p>Mountain operations is more than skiing ability. It is a communication-driven environment made up of ski instructors, ski patrollers, supervisors, and operations staff who rely on shared writing practices, verbal coordination, and structured communication to manage safety, instruction, and guest experience.</p>
+            <div class="quote"><strong>My research in one line:</strong> technical skill can get someone into the community, but communication is what helps them function inside it.</div>
+          </article>
+
+          <article class="card soft">
+            <h2>Why I focused on communication</h2>
+            <p>As a ski instructor, I started noticing that what separated new instructors from experienced ones was not just skiing. It was how clearly they explained skills, how useful their notes were, and how efficiently they coordinated with other staff. That same pattern showed up in my interviews with ski patrol and other instructors.</p>
+          </article>
+        </div>
+
+        <aside class="stack">
+          <article class="card">
+            <h3>What my interviews showed</h3>
+            <ul class="checklist">
+              <li><span class="checkmark">✓</span><span>Newcomers learn by watching experienced members.</span></li>
+              <li><span class="checkmark">✓</span><span>Writing like lesson notes and patrol reports helps organize work.</span></li>
+              <li><span class="checkmark">✓</span><span>Expertise becomes visible through calm, precise communication.</span></li>
+            </ul>
+          </article>
+
+          <article class="card photo">
+            <img src="assets/images/team.jpg" alt="Ski school staff in red jackets during a snowy day on the mountain">
+            <div class="photo-caption">A real on-mountain moment from ski school. This image reinforces one of my central findings: the environment is fast-moving, team-based, and built around constant communication.</div>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="entry">
+      <div class="layout">
+        <div class="stack">
+          <article class="card">
+            <div class="section-number">02</div>
+            <h2>How to enter the community</h2>
+            <p>Getting into mountain operations usually starts with technical ability, certifications, and hiring. But my research showed that this is only the beginning. New members also need to learn how the community communicates through lesson notes, reports, radio calls, and feedback from experienced staff.</p>
+          </article>
+
+          <article class="card soft">
+            <h2>What surprised me most</h2>
+            <p>Before I started this project, I assumed communication would be clearly taught during training. Instead, it seems to be something people absorb by participating. That means new members have to pay attention not just to how people ski, but to how they explain, document, and coordinate.</p>
+          </article>
+
+          <article class="card">
+            <h2>How to get started</h2>
+            <ol class="steps">
+              <li>Build strong skiing ability and earn certifications that fit the role you want, such as PSIA Level 1 for instruction.</li>
+              <li>Apply early to resorts and expect hiring, shadowing, and on-mountain training to be competitive and fast-paced.</li>
+              <li>Watch how experienced members write notes, give directions, and communicate with guests or coworkers.</li>
+              <li>Ask for feedback early and often. Communication improves faster when you treat it like part of the job, not a side task.</li>
+              <li>Focus on clarity, calmness, and adaptability. Those qualities shape whether people see you as reliable.</li>
+            </ol>
+          </article>
+        </div>
+
+        <aside class="stack">
+          <article class="card">
+            <h3>What newcomers should know</h3>
+            <p>Entering the community is not just about being able to ski well. It is also about learning the tone, pace, and expectations of a workplace that runs on shared communication.</p>
+          </article>
+          <article class="card photo">
+            <img src="assets/images/lesson.jpg" alt="Ski instructor in a red jacket standing with beginner skiers during a lesson area">
+            <div class="photo-caption">This lesson-area image shows what entry into the community actually looks like: observation, coordination, and communication with guests in real time.</div>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="communication">
+      <div class="layout">
+        <div class="stack">
+          <article class="card">
+            <div class="section-number">03</div>
+            <h2>How communication actually works</h2>
+            <p>A key finding from my research is that communication is learned through participation. As a ski instructor, I learned how to write lesson notes not from a manual, but by watching experienced instructors, receiving feedback, and adjusting over time. Ski patrollers seem to develop report-writing in a similar way, through correction and repetition.</p>
+          </article>
+
+          <article class="card soft">
+            <h2>Different roles, different expectations</h2>
+            <p>Ski patrol communication is usually more structured, objective, and tied to safety and liability. Ski instruction communication is more adaptive and focused on clarity, tone, and explaining skills in ways that fit each student. So while both groups rely on communication, the purpose changes what that communication looks like.</p>
+          </article>
+
+          <article class="card">
+            <h2>What defines expertise</h2>
+            <p>One of the biggest takeaways from my research is that expertise is not just about skiing ability. Experienced members communicate more clearly, efficiently, and appropriately for the situation. Whether it is writing stronger lesson notes, explaining skills more effectively, or staying calm and precise on the radio, communication becomes a major marker of expertise.</p>
+            <div class="quote"><strong>In practice:</strong> the best instructors are usually not just the strongest skiers. They are the ones who can explain, adjust, and document well enough that other people can build on their work.</div>
+          </article>
+        </div>
+
+        <aside class="stack">
+          <article class="card">
+            <h3>Key communication takeaways</h3>
+            <ul class="checklist">
+              <li><span class="checkmark">✓</span><span>Treat lesson notes and reports as meaningful communication, not busywork.</span></li>
+              <li><span class="checkmark">✓</span><span>Learn the tone and expectations of the role you want to enter.</span></li>
+              <li><span class="checkmark">✓</span><span>Build technical skill and communication skill at the same time.</span></li>
+            </ul>
+          </article>
+          <article class="card photo">
+            <img src="assets/images/team.jpg" alt="Snowy ski school team in red jackets on the mountain">
+            <div class="photo-caption">The conditions shown here highlight why efficient communication matters. In mountain operations, weather, pace, and guest needs all make clarity more important.</div>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="videos">
+      <div class="stack">
+        <article class="card">
+          <div class="section-number">04</div>
+          <h2>Videos from the community</h2>
+          <p>These videos are packaged locally with the site so they work offline inside the downloaded website. They show parts of Killington's instruction and operations environment that connect directly to my research.</p>
+        </article>
+
+        <div class="video-grid">
+          <article class="video-card">
+            <div class="video-frame">
+              <video controls preload="metadata">
+                <source src="assets/videos/killington-snow-school.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="video-copy">
+              <h3>Killington Snow Sports School</h3>
+              <p>This video helps show how the resort presents ski instruction and introduces newcomers to the learning environment.</p>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-frame">
+              <video controls preload="metadata">
+                <source src="assets/videos/jeff-brings-the-snow.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="video-copy">
+              <h3>Jeff Brings the Snow</h3>
+              <p>This clip connects my project to snowmaking and the larger systems behind daily mountain operations.</p>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-frame">
+              <video controls preload="metadata">
+                <source src="assets/videos/snow-guns.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="video-copy">
+              <h3>1,000 New Snow Guns</h3>
+              <p>This video shows infrastructure and planning on a larger scale, reinforcing how mountain operations extends beyond instruction alone.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="footer-note">
+          <h3 style="margin-top:0; margin-bottom:10px;">Final takeaway</h3>
+          <p>Technical skill may get someone into the community, but communication determines how they improve, coordinate with others, and are seen as experienced members. Learning how the community writes, speaks, and shares information is essential to becoming successful within mountain operations.</p>
+        </div>
+      </div>
+    </section>
+  
+<section class="page" id="analysis">
+  <div class="stack">
+    <article class="card">
+      <div class="section-number">05</div>
+      <h2>Rhetorical Reflection</h2>
+      <p>This website remixes my research argument into a format that is easier for ASU students to use. In my research paper, I wrote for an academic audience and focused on analysis, theory, and evidence. For this website, I shifted to a student-facing audience that needs information quickly and clearly. That change affected nearly every rhetorical decision I made. Instead of long paragraphs and dense source integration, I used shorter sections, navigation tabs, images, and videos so the audience could move through the information in a practical way.</p>
+    </article>
+
+    <article class="card soft">
+      <h3>Audience and Purpose</h3>
+      <p>My main audience is ASU students interested in outdoor work and seasonal employment. Because they are not experts, the site focuses on clarity and usability. Sections like “How to Enter” and “Communication” translate research into something actionable.</p>
+    </article>
+
+    <article class="card">
+      <h3>Genre Choice</h3>
+      <p>I chose a website because it allows for visual and interactive learning. The use of images and videos reinforces the real-world context, while navigation lets users access information quickly instead of reading linearly like an essay.</p>
+    </article>
+
+    <article class="card soft">
+      <h3>Use of Research</h3>
+      <p>This remix keeps my core argument that communication defines success in mountain operations. Instead of presenting it through dense academic writing, I adapted it into a format that teaches and guides new members of the discourse community.</p>
+    </article>
+  </div>
+</section>
+
+</main>
+
+  <script>
+    const pages = document.querySelectorAll('.page');
+    const controls = document.querySelectorAll('[data-page]');
+    function showPage(id) {
+      pages.forEach(page => page.classList.toggle('active', page.id === id));
+      controls.forEach(control => control.classList.toggle('active', control.dataset.page === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    controls.forEach(control => {
+      control.addEventListener('click', () => showPage(control.dataset.page));
+    });
+  </script>
+</body>
+</html>
